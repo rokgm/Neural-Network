@@ -5,5 +5,5 @@ def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
 
-def deriv_sigmoid(x):
+def sigmoid_der(x):
     return 1 / (1 + np.exp(-x)) * (1 - (1 / (1 + np.exp(-x))))
