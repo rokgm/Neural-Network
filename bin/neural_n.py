@@ -1,12 +1,16 @@
-import numpy as np
+import time
 
-from sigmoid import sigmoid, sigmoid_der
+import numpy as np
+import matplotlib.pyplot as plt
+import tqdm
+
 from cost import mean_squared_error, mean_squared_error_der
+from sigmoid import sigmoid, sigmoid_der
 
 
 class NeuralNetwork():
 
-    def __init__(self, input_size, hidden_size, output_size, learning_rate=0.001):
+    def __init__(self, input_size, hidden_size, output_size, learning_rate=0.001, epochs=1):
         """Create neural network structure.
 
         Args:
@@ -18,6 +22,7 @@ class NeuralNetwork():
         self.hidden_size = hidden_size
         self.output_size = output_size
         self.learning_rate = learning_rate
+        self.epochs = epochs
         self.weights1 = np.random.rand(self.hidden_size, self.input_size) * np.sqrt(1. / self.input_size)
         self.weights2 = np.random.randn(self.output_size, self.hidden_size) * np.sqrt(1. / self.hidden_size)
         self.biases1 = np.random.randn(self.hidden_size) * np.sqrt(1. / self.input_size)
@@ -27,7 +32,7 @@ class NeuralNetwork():
         return 'NeuralNetwork(input_size={0.input_size}, hidden_size={0.hidden_size}, output_size={0.output_size})'.format(self)
 
     def add_input(self, lst):
-        """Add input data to neural network.
+        """Add input data to neural network. Normalize input before adding.
 
         Args:
             lst (list)
@@ -38,12 +43,12 @@ class NeuralNetwork():
         else:
             raise ValueError('Size of input and number of input neurons do not match.')
 
-    def add_output(self, lst):
+    def add_output(self, lst):       
         """Add output data to neural network.
 
         Args:
-            lst (list)
-        """
+            lst (list): list of 0 with one 1 for desired output
+        """      
         lst = np.array(lst) 
         if self.output_size == len(lst):
             self.output = lst
@@ -59,20 +64,110 @@ class NeuralNetwork():
         self.output_a = sigmoid(self.output_z)
         return self.output_a
 
-    def backpropagation(self):
+    def backpropagate(self):
+        """Computes gradient of weights and biases.
+        """        
         delta_output = np.multiply(mean_squared_error_der(self.output_a, self.output), sigmoid_der(self.output_z))
-        print(delta_output)
         delta_hidden = np.multiply(np.dot(np.transpose(self.weights2), delta_output), sigmoid_der(self.hidden_z))
-        print(delta_hidden)
         delta_bias2 = delta_output
         delta_bias1 = delta_hidden
-        print(np.shape(delta_output), np.shape(self.hidden_a))
-        delta_weights2 = np.dot(np.transpose(delta_output), self.hidden_a)              # popravi dimenzije, spremeni v matmul?
+        delta_weights2 = np.outer(delta_output, self.hidden_a)
+        delta_weights1 = np.outer(delta_hidden, self.input)
+        return delta_weights1, delta_bias1, delta_weights2, delta_bias2
+
+    def update_weights_biases(self):
+        """Updates weights and biases of network with backpropagate.
+        """        
+        changes = self.backpropagate()
+        self.weights1 -= self.learning_rate * changes[0]
+        self.biases1 -= self.learning_rate * changes[1]
+        self.weights2 -= self.learning_rate * changes[2]
+        self.biases2 -= self.learning_rate * changes[3]
+
+    def train(self, input_output_pairs, visualize_cost=False):  
+        """Trains network with pairs of input and desired output vectors.
+
+        Args:
+            input_output_pairs (tuple of 2 vectors)
+            visualize_cost (bool): Plot graph cost(iterations). Number of input_output_pairs must be >= 100.
+        """ 
+        if visualize_cost:
+
+            if len(input_output_pairs) < 400:
+                raise ValueError('For visualize_cost number of input-output pairs must be atleast 400.')
+
+            p_cost = np.array([])                     
+            for epoch in tqdm.tqdm(range(self.epochs), 'Epochs'):           # Popravi, da bo štelo prave iteracije ne bloke.
+                for section in tqdm.tqdm(np.array_split(input_output_pairs, 400 / self.epochs), 'Blocks of iterations'):
+                    for x, y in section:
+                        self.add_input(x)
+                        self.add_output(y)
+                        self.feed_forward()
+                        self.update_weights_biases()
+                    p_cost = np.append(p_cost, mean_squared_error(self.output_a, self.output))
+            plt.plot(p_cost)
+            plt.xlabel('Blocks of iterations')
+            plt.ylabel('Mean Squared Error')
+            plt.show()
+
+        else:
+            for epoch in tqdm.tqdm(range(self.epochs), 'Epochs'):
+                for x, y in tqdm.tqdm(input_output_pairs, 'Iterations'):
+                    self.add_input(x)
+                    self.add_output(y)
+                    self.feed_forward()
+                    self.update_weights_biases()
+
+    def evaluate(self, input_output_pairs):
+        """Evaluates network with mean squared error of predicted vector of input and desired output vector.
+
+        Args:
+            input_output_pairs (tuple of 2 vectors)
+
+        Returns:
+            float: mean squared error
+        """        
+        f_forw = np.array([])
+        desired = np.array([])
+        for x, y in input_output_pairs:
+            self.add_input(x)
+            self.feed_forward()
+            f_forw = np.append(f_forw, [self.output_a])
+            desired = np.append(desired, y)
+        return mean_squared_error(f_forw, desired)
+
+    def accuracy(self, input_output_pairs):
+        """Accuracy of network predictions.
+
+        Args:
+            input_output_pairs (tuple of 2 vectors):
+
+        Returns:
+            float: percentage of correct predictions
+        """ 
+        pred = np.array([])
+        for x, y in input_output_pairs:
+            self.add_input(x)
+            self.feed_forward()
+            pred = np.append(pred, np.argmax(self.output_a) == np.argmax(y))
+        return '{} %'.format(np.mean(pred) * 100)
+    
+    def predict(self, x):
+        '''Returns index of maximum of predicted output.
+        '''
+        self.add_input(x)
+        return np.argmax(self.feed_forward())
+
+    def save_network(self, filename):
+        np.savez(filename, weights1=self.weights1, weights2=self.weights2, biases1=self.biases1, biases2=self.biases2)
+
+    #def load_network(self, filename, networkname):
 
 
-net = NeuralNetwork(5,4,3)
-net.add_input([2,5,6,7,8])
-net.add_output([0,1,0])
 
-print(NeuralNetwork.feed_forward(net))
-NeuralNetwork.backpropagation(net)
+
+net = NeuralNetwork(5,4,3, learning_rate=0.01, epochs=10)
+net.train([([1,2,3,4,5], [0,1,0])] * 10000, visualize_cost=True)
+print(net.evaluate([([1,2,3,4,5], [0,1,0])] * 100))
+print(net.accuracy([([1,2,3,4,5], [0,1,0])] * 100))
+print(net.predict([1,2,3,4,5]))
