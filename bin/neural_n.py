@@ -137,7 +137,7 @@ class NeuralNetwork():
         return mean_squared_error(f_forw, desired)
 
     def accuracy(self, input_output_pairs):
-        """Accuracy of network predictions.
+        """Percentage of accurate network predictions.
 
         Args:
             input_output_pairs (tuple of 2 vectors):
