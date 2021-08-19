@@ -102,8 +102,8 @@ class NeuralNetwork():
             if len(input_output_pairs) < 400:
                 raise ValueError('For visualize_cost number of input-output pairs must be atleast 400.')
 
-            p_cost = np.array([])                  
-            p_epochs = np.array([])
+            plot_cost = np.array([])                  
+            plot_epochs = np.array([])
             k = 0
             x_scaling_const = self.epochs / 400
             for epoch in tqdm.tqdm(range(self.epochs), 'Epochs'):
@@ -113,10 +113,10 @@ class NeuralNetwork():
                         self.add_output(y)
                         self.feed_forward()
                         self.update_weights_biases()
-                    p_cost = np.append(p_cost, mean_squared_error(self.output_a, self.output))
-                    p_epochs = np.append(p_epochs, k * x_scaling_const)
+                    plot_cost = np.append(plot_cost, mean_squared_error(self.output_a, self.output))
+                    plot_epochs = np.append(plot_epochs, k * x_scaling_const)
                     k += 1
-            plt.plot(p_epochs, p_cost)
+            plt.plot(plot_epochs, plot_cost)
             plt.xlabel('Epochs')
             plt.ylabel('Mean Squared Error')
             plt.show()
@@ -170,10 +170,23 @@ class NeuralNetwork():
         return np.argmax(self.feed_forward())
 
     def save_network(self, filename):
+        """Saves network structure and parameters.
+
+        Args:
+            filename (str): name of file to save
+        """        
         np.savez(filename, weights1=self.weights1, weights2=self.weights2, biases1=self.biases1, biases2=self.biases2)
 
     @classmethod
     def load_network(cls, filename):
+        """Load network structure and parameters saved by save_network.
+
+        Args:
+            filename (str): name of file to load
+
+        Returns:
+            instance of NeuralNetwork
+        """        
         params = np.load(filename)
         weights1, weights2, biases1, biases2 = params['weights1'], params['weights2'], params['biases1'], params['biases2']
         
@@ -183,9 +196,3 @@ class NeuralNetwork():
         network.biases1 = biases1
         network.biases2 = biases2
         return network
-
-
-net = NeuralNetwork(5,4,3, learning_rate=0.01, epochs=5)
-net.train([([1,2,3,4,5], [0,1,0])] * 50000, visualize_cost=False)
-print(net.evaluate([([1,2,3,4,5], [0,1,0])] * 100))
-print(net.accuracy([([1,2,3,4,5], [0,1,0])] * 100))
