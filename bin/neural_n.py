@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tqdm
 
-from cost import mean_squared_error, mean_squared_error_der
-from sigmoid import sigmoid, sigmoid_der
+from bin.cost import mean_squared_error, mean_squared_error_der
+from bin.sigmoid import sigmoid, sigmoid_der
 
 
 class NeuralNetwork():
@@ -196,3 +196,17 @@ class NeuralNetwork():
         network.biases1 = biases1
         network.biases2 = biases2
         return network
+
+'''from sklearn.datasets import fetch_openml
+from keras.utils.np_utils import to_categorical
+from sklearn.model_selection import train_test_split
+
+
+x, y = fetch_openml('mnist_784', version=1, return_X_y=True)
+x = (x/255).astype('float32')
+y = to_categorical(y)
+
+x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.15, random_state=42)
+
+net = NeuralNetwork(784,300,10, learning_rate=0.001, epochs=1)
+net.train(list(zip(x_train, y_train))[:100], visualize_cost=True)'''

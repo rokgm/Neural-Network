@@ -10,3 +10,4 @@ Uporabil bom STOCHASTIC GRADIENT DESCENT.
 - https://mlfromscratch.com/neural-network-tutorial/#/
 - https://towardsdatascience.com/understanding-backpropagation-algorithm-7bb3aa2f95fd
 - https://www.heatonresearch.com/2017/06/01/hidden-layers.html
+- https://www.python-course.eu/neural_network_mnist.php
