@@ -1,33 +1,32 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 from bin.neural_n import NeuralNetwork
 
-'''# If enough ram is available can ce loaded with np.loadtxt
-#  but might return MemoryError: cannot allocate memory for array
-train_data = np.empty([60000,785])
-row = 0
-with open('dataset/mnist_train.csv', 'r') as data:
-    for line in data:
-        train_data[row] = np.fromstring(line, sep=',')
+N_train = 3   # Number of training examples from file
+train_data = np.zeros([N_train, 785])
+with open('data_set/mnist_train.csv', 'r') as data:
+    for x in range(N_train):
+        train_data[x] = np.fromstring(next(data), sep=',')
+train_data = train_data.astype(np.int)
 
-test_data = np.empty([10000,785])
-row = 0
-with open('dataset/mnist_test.csv', 'r') as data:
-    for line in data:
-        test_data[row] = np.fromstring(line, sep=',')
+N_test = 3   # Number of testing examples from file
+test_data = np.zeros([N_test, 785])
+with open('data_set/mnist_test.csv', 'r') as data:
+    for x in range(N_test):
+        test_data[x] = np.fromstring(next(data), sep=',')
+test_data = test_data.astype(np.int)
 
-fac = 1 / 255    # Can be 0.99/255 + 0.01 to avoid 0 values, which can prevent weight updates
+fac = 1 / 255
+train_imgs = (train_data[:, 1:]) * fac
+test_imgs = (test_data[:, 1:]) * fac
 
-train_imgs = np.asfarray(train_data[:, 1:]) * fac
-test_imgs = np.asfarray(test_data[:, 1:]) * fac
+train_labels = train_data[:, :1].transpose()[0,:]
+test_labels = (test_data[:, :1]).transpose()[0,:]
 
-train_labels = np.asfarray(train_data[:, :1])
-test_labels = np.asfarray(test_data[:, :1])
-
-lr = np.arange(10)
-
-train_labels_one_hot = (lr==train_labels).astype(np.int)
-test_labels_one_hot = (lr==test_labels).astype(np.int)
-print(train_labels_one_hot[243])
-print(test_labels_one_hot[7518])'''
+'''img = test_imgs[0].reshape((28,28))
+plt.imshow(img, cmap='Greys')
+plt.show()'''
 
 '''from mnist import MNIST
 
@@ -35,11 +34,9 @@ mndata = MNIST('dataset')
 images_train, labels_train = mndata.load_training()
 images_test, labels_test = mndata.load_testing()'''
 
-from sklearn.datasets import fetch_openml
+'''from sklearn.datasets import fetch_openml
 from keras.utils.np_utils import to_categorical
 from sklearn.model_selection import train_test_split
-
-from bin.neural_n import NeuralNetwork
 
 x, y = fetch_openml('mnist_784', version=1, return_X_y=True)
 x = (x/255).astype('float32')
@@ -49,7 +46,7 @@ x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.15, random_s
 net = NeuralNetwork(784,300,10, learning_rate=0.01, epochs=1)
 net.train(list(zip(x_train, y_train))[500], visualize_cost=False)
 print(net.evaluate(list(zip(x_train, y_train))[100]))
-print(net.accuracy(list(zip(x_train, y_train))[100]))
+print(net.accuracy(list(zip(x_train, y_train))[100]))'''
 
 
 '''net = NeuralNetwork(5,4,3, learning_rate=0.1, epochs=1)
