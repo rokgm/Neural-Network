@@ -23,10 +23,16 @@ class NeuralNetwork():
         self.output_size = output_size
         self.learning_rate = learning_rate
         self.epochs = epochs
-        self.weights1 = np.random.rand(self.hidden_size, self.input_size) * np.sqrt(1. / self.input_size)
-        self.weights2 = np.random.randn(self.output_size, self.hidden_size) * np.sqrt(1. / self.hidden_size)
-        self.biases1 = np.random.randn(self.hidden_size) * np.sqrt(1. / self.input_size)
-        self.biases2 = np.random.randn(self.output_size) * np.sqrt(1. / self.hidden_size)
+
+        weights1 = np.random.rand(self.hidden_size, self.input_size) * np.sqrt(1. / self.input_size)
+        weights2 = np.random.randn(self.output_size, self.hidden_size) * np.sqrt(1. / self.hidden_size)
+        biases1 = np.random.randn(self.hidden_size) * np.sqrt(1. / self.input_size)
+        biases2 = np.random.randn(self.output_size) * np.sqrt(1. / self.hidden_size)
+        
+        self.weights1 = weights1
+        self.weights2 = weights2
+        self.biases1 = biases1
+        self.biases2 = biases2
 
     def __repr__(self):
         return 'NeuralNetwork(input_size={0.input_size}, hidden_size={0.hidden_size}, output_size={0.output_size})'.format(self)
@@ -98,7 +104,7 @@ class NeuralNetwork():
 
             p_cost = np.array([])                     
             for epoch in tqdm.tqdm(range(self.epochs), 'Epochs'):           # Popravi, da bo štelo prave iteracije ne bloke.
-                for section in tqdm.tqdm(np.array_split(input_output_pairs, 400 / self.epochs), 'Blocks of iterations'):
+                for section in tqdm.tqdm(np.array_split(input_output_pairs, 400 / self.epochs), 'Epoch'):
                     for x, y in section:
                         self.add_input(x)
                         self.add_output(y)
@@ -140,7 +146,7 @@ class NeuralNetwork():
         """Percentage of accurate network predictions.
 
         Args:
-            input_output_pairs (tuple of 2 vectors):
+            input_output_pairs (tuple of 2 vectors)
 
         Returns:
             float: percentage of correct predictions
@@ -153,7 +159,7 @@ class NeuralNetwork():
         return '{} %'.format(np.mean(pred) * 100)
     
     def predict(self, x):
-        '''Returns index of maximum of predicted output.
+        '''Returns index of maximum of predicted output vector.
         '''
         self.add_input(x)
         return np.argmax(self.feed_forward())
@@ -161,13 +167,20 @@ class NeuralNetwork():
     def save_network(self, filename):
         np.savez(filename, weights1=self.weights1, weights2=self.weights2, biases1=self.biases1, biases2=self.biases2)
 
-    #def load_network(self, filename, networkname):
-
-
+    @classmethod
+    def load_network(cls, filename):
+        params = np.load(filename)
+        weights1, weights2, biases1, biases2 = params['weights1'], params['weights2'], params['biases1'], params['biases2']
+        
+        network = cls(np.shape(weights1)[1], np.shape(weights2)[1], np.shape(weights2)[0])
+        network.weights1 = weights1
+        network.weights2 = weights2
+        network.biases1 = biases1
+        network.biases2 = biases2
+        return network
 
 
 net = NeuralNetwork(5,4,3, learning_rate=0.01, epochs=10)
-net.train([([1,2,3,4,5], [0,1,0])] * 10000, visualize_cost=True)
+net.train([([1,2,3,4,5], [0,1,0])] * 10000, visualize_cost=False)
 print(net.evaluate([([1,2,3,4,5], [0,1,0])] * 100))
 print(net.accuracy([([1,2,3,4,5], [0,1,0])] * 100))
-print(net.predict([1,2,3,4,5]))
