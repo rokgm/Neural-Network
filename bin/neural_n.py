@@ -102,8 +102,11 @@ class NeuralNetwork():
             if len(input_output_pairs) < 400:
                 raise ValueError('For visualize_cost number of input-output pairs must be atleast 400.')
 
-            p_cost = np.array([])                     
-            for epoch in tqdm.tqdm(range(self.epochs), 'Epochs'):           # Popravi, da bo štelo prave iteracije ne bloke.
+            p_cost = np.array([])                  
+            p_epochs = np.array([])
+            k = 0
+            x_scaling_const = self.epochs / 400
+            for epoch in tqdm.tqdm(range(self.epochs), 'Epochs'):
                 for section in tqdm.tqdm(np.array_split(input_output_pairs, 400 / self.epochs), 'Epoch'):
                     for x, y in section:
                         self.add_input(x)
@@ -111,8 +114,10 @@ class NeuralNetwork():
                         self.feed_forward()
                         self.update_weights_biases()
                     p_cost = np.append(p_cost, mean_squared_error(self.output_a, self.output))
-            plt.plot(p_cost)
-            plt.xlabel('Blocks of iterations')
+                    p_epochs = np.append(p_epochs, k * x_scaling_const)
+                    k += 1
+            plt.plot(p_epochs, p_cost)
+            plt.xlabel('Epochs')
             plt.ylabel('Mean Squared Error')
             plt.show()
 
@@ -180,7 +185,7 @@ class NeuralNetwork():
         return network
 
 
-net = NeuralNetwork(5,4,3, learning_rate=0.01, epochs=10)
-net.train([([1,2,3,4,5], [0,1,0])] * 10000, visualize_cost=False)
+net = NeuralNetwork(5,4,3, learning_rate=0.01, epochs=5)
+net.train([([1,2,3,4,5], [0,1,0])] * 50000, visualize_cost=False)
 print(net.evaluate([([1,2,3,4,5], [0,1,0])] * 100))
 print(net.accuracy([([1,2,3,4,5], [0,1,0])] * 100))
