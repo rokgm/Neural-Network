@@ -197,16 +197,18 @@ class NeuralNetwork():
         network.biases2 = biases2
         return network
 
-'''from sklearn.datasets import fetch_openml
-from keras.utils.np_utils import to_categorical
-from sklearn.model_selection import train_test_split
+    @staticmethod
+    def one_hot_encoder(indx_lst, vect_len):
+        """Creates vector on zeros with one 1 value at given index.
 
+        Args:
+            indx_lst (int)
+            vect_len (int): lenght of vector
 
-x, y = fetch_openml('mnist_784', version=1, return_X_y=True)
-x = (x/255).astype('float32')
-y = to_categorical(y)
-
-x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.15, random_state=42)
-
-net = NeuralNetwork(784,300,10, learning_rate=0.001, epochs=1)
-net.train(list(zip(x_train, y_train))[:100], visualize_cost=True)'''
+        Returns:
+            np.array
+        """        
+        indx_lst = np.array(indx_lst)
+        hot_enc = np.zeros((indx_lst.size, vect_len))
+        hot_enc[np.arange(indx_lst.size), indx_lst] = 1
+        return hot_enc
