@@ -35,7 +35,7 @@ class NeuralNetwork():
         self.biases2 = biases2
 
     def __repr__(self):
-        return 'NeuralNetwork(input_size={0.input_size}, hidden_size={0.hidden_size}, output_size={0.output_size})'.format(self)
+        return 'NeuralNetwork(input_size={0.input_size}, hidden_size={0.hidden_size}, output_size={0.output_size}, learning_rate={0.learning_rate}, epochs={0.epochs})'.format(self)
 
     def add_input(self, lst):
         """Add input data to neural network. Normalize input before adding.
