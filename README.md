@@ -25,10 +25,16 @@ Network shranjen z `NeuralNetwork.save_network` se naloži z `NeuralNetwork.load
 
 # Viri:
 - https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
-- https://builtin.com/data-science/gradient-descent
+(uporabljen za osnovno razumevanje nevronskih mrež)
+- http://neuralnetworksanddeeplearning.com/chap2.html
+(uporabljen za algoritem za backpropagation, kodo sem napisal sam)
 - https://en.wikipedia.org/wiki/Backpropagation
+(vir uporabljen za matematične operacije nevronskih mrež (kako feedforward z matrikami...))
 - https://towardsdatascience.com/weight-initialization-techniques-in-neural-networks-26c649eb3b78
+(kako nastaviti weights and biases za dobro delovanje)
 - https://mlfromscratch.com/neural-network-tutorial/#/
-- https://towardsdatascience.com/understanding-backpropagation-algorithm-7bb3aa2f95fd
+(za osnovno struktuo neural_n, kako narediti class za nevronske mreže)
 - https://www.heatonresearch.com/2017/06/01/hidden-layers.html
+(koliko nevronov v skriti plasti)
 - https://www.python-course.eu/neural_network_mnist.php
+(podatki za učenje in koda za `one_hot_encoder`)
