@@ -118,6 +118,7 @@ class NeuralNetwork():
                     k += 1
             plt.plot(plot_epochs, plot_cost)
             plt.xlabel('Epochs')
+            plt.ylim(0,0.5)
             plt.ylabel('Mean Squared Error')
             plt.show()
 
