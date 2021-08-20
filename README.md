@@ -33,7 +33,7 @@ Network shranjen z `NeuralNetwork.save_network` se naloži z `NeuralNetwork.load
 - https://towardsdatascience.com/weight-initialization-techniques-in-neural-networks-26c649eb3b78
 (kako nastaviti weights and biases za dobro delovanje)
 - https://mlfromscratch.com/neural-network-tutorial/#/
-(za osnovno struktuo neural_n, kako narediti class za nevronske mreže)
+(za osnovno strukturo neural_n, kako narediti class za nevronske mreže)
 - https://www.heatonresearch.com/2017/06/01/hidden-layers.html
 (koliko nevronov v skriti plasti)
 - https://www.python-course.eu/neural_network_mnist.php
