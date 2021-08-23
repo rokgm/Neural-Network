@@ -198,7 +198,7 @@ class NeuralNetwork():
 
     @staticmethod
     def one_hot_encoder(indx_lst, vect_len):
-        """Creates vector on zeros with one 1 value at given index.
+        """Creates vector of zeros with one 1 value at given index.
 
         Args:
             indx_lst (int)
