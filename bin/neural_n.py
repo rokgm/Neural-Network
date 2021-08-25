@@ -93,7 +93,7 @@ class NeuralNetwork():
 
         Args:
             input_output_pairs (tuple of 2 vectors)
-            visualize_cost (bool): Plot graph cost(iterations). Number of input_output_pairs must be >= 100.
+            visualize_cost (bool): Plot graph cost(iterations). Number of input_output_pairs must be >= 400.
         """ 
         if visualize_cost:
 
