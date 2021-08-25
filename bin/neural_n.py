@@ -22,21 +22,16 @@ class NeuralNetwork():
         self.learning_rate = learning_rate
         self.epochs = epochs
 
-        weights1 = np.random.rand(self.hidden_size, self.input_size) * np.sqrt(1. / self.input_size)
-        weights2 = np.random.randn(self.output_size, self.hidden_size) * np.sqrt(1. / self.hidden_size)
-        biases1 = np.random.randn(self.hidden_size) * np.sqrt(1. / self.input_size)
-        biases2 = np.random.randn(self.output_size) * np.sqrt(1. / self.hidden_size)
-        
-        self.weights1 = weights1
-        self.weights2 = weights2
-        self.biases1 = biases1
-        self.biases2 = biases2
+        self.weights1 = np.random.rand(self.hidden_size, self.input_size) * np.sqrt(1. / self.input_size)
+        self.weights2 = np.random.randn(self.output_size, self.hidden_size) * np.sqrt(1. / self.hidden_size)
+        self.biases1 = np.random.randn(self.hidden_size) * np.sqrt(1. / self.input_size)
+        self.biases2 = np.random.randn(self.output_size) * np.sqrt(1. / self.hidden_size)
 
     def __repr__(self):
         return 'NeuralNetwork(input_size={0.input_size}, hidden_size={0.hidden_size}, output_size={0.output_size}, learning_rate={0.learning_rate}, epochs={0.epochs})'.format(self)
 
     def add_input(self, lst):
-        """Add input data to neural network. Normalize input before adding.
+        """Add input data to neural network. Input should be normalised before adding.
 
         Args:
             lst (list)
@@ -129,7 +124,7 @@ class NeuralNetwork():
                     self.update_weights_biases()
 
     def evaluate(self, input_output_pairs):
-        """Evaluates network with mean squared error of predicted vector of input and desired output vector.
+        """Evaluates network with mean squared error of network output and desired output vector.
 
         Args:
             input_output_pairs (tuple of 2 vectors)
@@ -163,7 +158,7 @@ class NeuralNetwork():
         return '{} %'.format(np.mean(pred) * 100)
     
     def predict(self, x):
-        '''Returns index of maximum of predicted output vector.
+        '''Returns index of maximum of network output.
         '''
         self.add_input(x)
         return np.argmax(self.feed_forward())
@@ -181,7 +176,7 @@ class NeuralNetwork():
         """Load network structure and parameters saved by save_network.
 
         Args:
-            filename (str): name of file to load
+            filename (str): name of file
 
         Returns:
             instance of NeuralNetwork
@@ -198,7 +193,7 @@ class NeuralNetwork():
 
     @staticmethod
     def one_hot_encoder(indx_lst, vect_len):
-        """Creates vector of zeros with one 1 value at given index.
+        """Creates vector of zeros with vakue 1 at given index.
 
         Args:
             indx_lst (int)
