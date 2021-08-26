@@ -158,8 +158,8 @@ class NeuralNetwork():
         return '{} %'.format(np.mean(pred) * 100)
     
     def predict(self, x):
-        '''Returns index of maximum of network output.
-        '''
+        """Returns index of maximum of network output.
+        """
         self.add_input(x)
         return np.argmax(self.feed_forward())
 
